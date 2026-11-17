@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Avi - Carta de Amor</title>
+    <style>
+        :root {
+            --bg-color: #0c0814;
+            --card-bg: #151024;
+            --primary-purple: #8b5cf6;
+            --deep-purple: #4c1d95;
+            --accent-glow: #a78bfa;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #2e2442;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Estrellas y fondo romántico */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: radial-gradient(white 1px, transparent 0);
+            background-size: 50px 50px;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        /* Animación inicial del sobre */
+        #envelope-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 8, 20, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .envelope-container {
+            text-align: center;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .envelope {
+            width: 280px;
+            height: 180px;
+            background: var(--deep-purple);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--primary-purple);
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-top: 100px solid var(--primary-purple);
+            transform-origin: top;
+            transition: transform 0.6s ease;
+        }
+
+        .envelope-container:hover .envelope::before {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-text {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: var(--accent-glow);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Contenido Principal */
+        .main-container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            z-index: 1;
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        h1, h2, h3 {
+            color: var(--accent-glow);
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+        }
+
+        p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .poem {
+            font-style: italic;
+            border-left: 3px solid var(--primary-purple);
+            padding-left: 15px;
+            margin: 20px 0;
+            color: var(--accent-glow);
+            background: rgba(76, 29, 149, 0.1);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Personajes interactivos */
+        .character-box {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            background: rgba(21, 16, 36, 0.8);
+            border: 1px dashed var(--primary-purple);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .avatar {
+            font-size: 2.5rem;
+            background: var(--deep-purple);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 2px solid var(--accent-glow);
+        }
+
+        .speech-bubble {
+            background: #1f1635;
+            padding: 12px 18px;
+            border-radius: 12px;
+            position: relative;
+            flex-grow: 1;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn {
+            background-color: var(--primary-purple);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #7c3aed;
+            transform: scale(1.03);
+        }
+
+        /* Sección de Minijuegos */
+        .games-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media(min-width: 600px) {
+            .games-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .game-card {
+            background: #100b1a;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .game-screen {
+            background: #08050e;
+            border: 1px solid var(--primary-purple);
+            height: 140px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        /* Fantasma y Ceviche */
+        .ghost-container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
+            border: 1px solid var(--primary-purple);
+            margin: 20px 0;
+        }
+
+        .hidden-word {
+            display: none;
+            color: #34d399;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <!-- Animación del Sobre Inicial -->
+    <div id="envelope-overlay" onclick="openEnvelope()">
+        <div class="envelope-container">
+            <div class="envelope"></div>
+            <div class="envelope-text">Toca para abrir tu carta, Avi 💌</div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal de la Carta -->
+    <div class="main-container" id="main-content">
+        <div class="card">
+            <h1>Para ti, Avi ✨</h1>
+            
+            <div class="poem">
+                "Entre sombras y destellos de un cielo violeta,<br>
+                se dibuja tu alma rara y discreta.<br>
+                Aunque a veces la torpeza nuble mi camino,<br>
+                tu rareza y mi locura abrazan el mismo destino."
+            </div>
+
+            <p>Mi querida Avi, antes que nada, quiero pedirte una disculpa muy sincera por haber sido torpe y a veces un poco estúpido. A veces la cabeza no me da y cometo errores, pero te juro que mi corazón siempre busca hacerte bien, aunque a veces me quede en modo "me quiero morir en chiquito" de la pena cuando la riego.</p>
+
+            <p>Quiero decirte que <strong>amo tu rareza</strong>. Ya sea que andes modo dinosaurio nube o patito volador, me encantas tal como eres. Y créeme, no te quedas atrás: yo también estoy bien raro y un poco (o muy) loco, así que hacemos el equipo perfecto de inadaptados hermosos.</p>
+
+            <p>También quiero agradecerte por cada uno de tus detalles, tus regalos maravillosos, especialmente tus cartas y esas flores hermosas como rosas y girasoles. Sé perfectamente que esos detallazos vienen directo de tu fantasma personal... ¡por más que intente esconderse!</p>
+        </div>
+
+        <!-- Sección Fantasma y Ceviche -->
+        <div class="card ghost-container">
+            <h3>👻 El Misterio del Fantasma</h3>
+            <p>El fantasma que te acompaña anda rondando por aquí y dejó algo escondido en su repertorio. Haz clic para descubrir qué secreto guarda entre sus sábanas flotantes:</p>
+            <button class="btn" onclick="revealGhostSecret()">Invocar al Fantasma</button>
+            <div id="ghost-secret" class="hidden-word">¡Achís! El fantasma dejó escrito en secreto la palabra mágica: <strong>ceviche</strong> 🐟🍋. ¡Provecho con el gustito peruano!</div>
+        </div>
+
+        <!-- Amigos Excéntricos: Pablo y Pirulín -->
+        <div class="card">
+            <h2>Nuestros peculiares amigos</h2>
+            
+            <div class="character-box">
+                <div class="avatar">🦖</div>
+                <div class="speech-bubble">
+                    <h3>Pablo el Dinosaurio</h3>
+                    <p id="pablo-speech">¡Way, uay mi vida! ¡K'ux tak'in! Este chavalón te adora con todo el corazón, ¡uxía mare! ¡Páakat por aquí, páakat por allá!</p>
+                    <button class="btn" onclick="pabloTalk()">Hablar con Pablo</button>
+                </div>
+            </div>
+
+            <div class="character-box">
+                <div class="avatar">👽🐱</div>
+                <div class="speech-bubble">
+                    <h3>Pirulín el Gato Alienígena</h3>
+                    <p id="pirulion-speech">Zorp... miau galáctico rao... tu rareza brilla más que tres lunas de andrómeda, humano rao... blop.</p>
+                    <button class="btn" onclick="pirulinTalk()">Escuchar a Pirulín</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minijuegos Interactivos -->
+        <div class="card">
+            <h2>Cuatro Minijuegos para Divertirnos</h2>
+            <p>Demuestra tus habilidades o diviértete un rato con estos pequeños retos hechos para ti:</p>
+            
+            <div class="games-grid">
+                <!-- Minijuego 1: Atrapa el Girasol -->
+                <div class="game-card">
+                    <h3>1. Atrapa el Girasol</h3>
+                    <div class="game-screen" id="sunflower-screen" style="cursor: pointer;" onclick="catchSunflower()">
+                        <span id="sunflower-item" style="font-size: 2rem; position: absolute; top: 20px; left: 40px;">🌻</span>
+                        <span id="sunflower-score" style="position: absolute; bottom: 5px; font-size: 0.9rem; color: var(--accent-glow);">Puntaje: 0</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">¡Haz clic en el girasol antes de que se mueva!</p>
+                </div>
+
+                <!-- Minijuego 2: El Oráculo del Amor -->
+                <div class="game-card">
+                    <h3>2. Oráculo del Amor</h3>
+                    <div class="game-screen" style="justify-content: center;">
+                        <p id="oracle-text" style="font-size: 0.95rem; font-style: italic; color: var(--accent-glow);">Toca el botón para consultar tu destino...</p>
+                    </div>
+                    <button class="btn" onclick="consultOracle()">Consultar Oráculo</button>
+                </div>
+
+                <!-- Minijuego 3: Elige tu Rareza -->
+                <div class="game-card">
+                    <h3>3. Medidor de Rareza</h3>
+                    <div class="game-screen">
+                        <p id="rarity-result" style="font-size: 1.1rem; font-weight: bold; color: #34d399; margin-top: 15px;">¡100% Raros y Felices!</p>
+                    </div>
+                    <button class="btn" onclick="measureRarity()">Medir Rareza</button>
+                </div>
+
+                <!-- Minijuego 4: ¿Ceviche o Fantasma? -->
+                <div class="game-card">
+                    <h3>4. Acierto Veloz</h3>
+                    <div class="game-screen">
+                        <p id="trivia-question" style="font-size: 0.95rem;">¿De quién son los regalos de rosas y girasoles?</p>
+                    </div>
+                    <button class="btn" onclick="answerTrivia('fantasma')">Del Fantasma 👻</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cierre de la carta -->
+        <div class="card" style="text-align: center;">
+            <h2>Un último pensamiento</h2>
+            <p>Sé que a veces las dudas nos ganan y que quizá tú misma sientas que no crees mucho en mí ni estés segura de lograr grandes cosas... Pero quiero decirte algo con todo mi ser: <strong>deseo con el alma que tú sí llegues a ser alguien grande en esta vida y cumplas cada uno de tus sueños</strong>. Tienes un brillo único, Avi.</p>
+            <p style="margin-top: 20px; color: var(--accent-glow); font-weight: bold;">Con todo mi cariño torpe y loco, tu servidor.</p>
+        </div>
+    </div>
+
+    <script>
+        function openEnvelope() {
+            const overlay = document.getElementById('envelope-overlay');
+            const main = document.getElementById('main-content');
+            
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                main.style.display = 'block';
+                setTimeout(() => {
+                    main.style.opacity = '1';
+                }, 50);
+            }, 800);
+        }
+
+        function revealGhostSecret() {
+            const secret = document.getElementById('ghost-secret');
+            secret.style.display = 'block';
+        }
+
+        // Pablo yucateco
+        const pabloPhrases = [
+            "¡Way, uay mi vida! ¡K'ux tak'in! ¡Páakat por aquí, páakat por allá!",
+            "¡T'u'ubul ta k'ab! ¡Estás bien chula, comadre, como panuchos recién hechos con su buena cebolla morada!",
+            "¡Ma'alob! ¡No te me achicopales, chiquita preciosa, que el amor triunfa en todo Yucatán y más allá!",
+            "¡Uinic y cool! ¡Qué viva el patito volador y el dinosaurio nube, uxía mare!"
+        ];
+        function pabloTalk() {
+            const randomPhrase = pabloPhrases[Math.floor(Math.random() * pabloPhrases.length)];
+            document.getElementById('pablo-speech').innerText = randomPhrase;
+        }
+
+        // Pirulín alienígena
+        const pirulinPhrases = [
+            "Zorp... miau galáctico rao... tu rareza brilla más que tres lunas de andrómeda, humano rao... blop.",
+            "Rao miau... el ceviche espacial sabe a purpurina violeta, zzzz... te quiero mucho rao.",
+            "Sistema estelar detecta torpeza adorable... recalculando afecto cósmico, miau rao blop.",
+            "Mis antenas captan tus rosas y girasoles desde otra galaxia, rao miau purr..."
+        ];
+        function pirulinTalk() {
+            const randomPhrase = pirulinPhrases[Math.floor(Math.random() * pirulinPhrases.length)];
+            document.getElementById('pirulion-speech').innerText = randomPhrase;
+        }
+
+        // Minijuego 1: Girasol
+        let sunflowerScore = 0;
+        function catchSunflower() {
+            sunflowerScore++;
+            document.getElementById('sunflower-score').innerText = "Puntaje: " + sunflowerScore;
+            const item = document.getElementById('sunflower-item');
+            const randomX = Math.floor(Math.random() * 200);
+            const randomY = Math.floor(Math.random() * 70);
+            item.style.left = randomX + 'px';
+            item.style.top = randomY + 'px';
+        }
+
+        // Minijuego 2: Oráculo
+        const oracleFortunes = [
+            "Tu destino incluye risas locas, rosas frescas y un plato gigante de ceviche con tu fantasma favorito.",
+            "El oráculo ve un futuro lleno de dinosaurios nube y abrazos calientitos cuando estés triste.",
+            "Se pronostica un nivel de felicidad del 99.9% a pesar de las torpezas cotidianas.",
+            "El universo confirma que tu rareza y su locura combinan mejor que el chocolate con chile."
+        ];
+        function consultOracle() {
+            const fortune = oracleFortunes[Math.floor(Math.random() * oracleFortunes.length)];
+            document.getElementById('oracle-text').innerText = fortune;
+        }
+
+        // Minijuego 3: Medidor de rareza
+        const rarities = [
+            "¡150% Raros, locos y perfectamente inadaptados!",
+            "¡Nivel de rareza: Dinosaurio nube volando en cohete espacial!",
+            "¡Rareza extrema detectada! Peligro de enamoramiento masivo.",
+            "¡Tan raros que el universo tuvo que inventar una categoría especial para ustedes!"
+        ];
+        function measureRarity() {
+            const result = rarities[Math.floor(Math.random() * rarities.length)];
+            document.getElementById('rarity-result').innerText = result;
+        }
+
+        // Minijuego 4: Trivia
+        function answerTrivia(type) {
+            alert("¡Exacto! El fantasma travieso deja rosas, girasoles y mucho amor (y un toque secreto de ceviche). ¡Muy bien!");
+        }
+    </script>
+</body>
+</html>
